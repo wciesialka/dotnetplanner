@@ -18,15 +18,19 @@ namespace planner
             ///<returns>Lowest index the Event can be found or inserted at.</returns>
             
             int lo = 0;
-            int hi = this.events.Count;
+            int hi = this.events.Count-1;
             int mid = 0;
-            while(lo < hi){
-                mid = (lo+hi)/2;
+            while(lo <= hi){
+                mid = ((lo+hi)/2);
                 Event x = this.events[mid];
-                if(x.GetID() >= target){
-                    hi = mid;
+                
+                if(x.GetID() == target){
+                    return mid;
+                }
+                else if(x.GetID() < target){
+                    lo = mid + 1;
                 } else {
-                    lo = mid;
+                    hi = mid - 1;
                 }
             }
             return mid;
@@ -36,8 +40,14 @@ namespace planner
             ///<summary>This method will add an event to the calendar. It will use the event's ID to put it in an increasing order.</summary>
             ///<param name="ev">Event to add.</param>
             
-            int index = this.IndexOfEventWithID(ev.GetID());
-            this.events.Insert(index,ev);
+            if(this.events.Count == 0){
+                this.events.Add(ev);
+            }
+            else
+            {
+                int index = this.IndexOfEventWithID(ev.GetID());
+                this.events.Insert(index+1, ev);
+            }
         }
 
         public bool RemoveEvent(int id){
@@ -55,17 +65,18 @@ namespace planner
         }
 
         public Event GetEvent(int id){
-        
+
             ///<summary>Get the first event with the specified ID. Retyrn null if not found.</summary>
             ///<param name="id">ID of Event to get.</param>
             ///<returns>The first event with the specified ID. If no event found, returns null.</returns>
-            
+
             int i = this.IndexOfEventWithID(id);
             if(this.events[i].GetID() == id){
                 return this.events[i];
             } else {
                 return null;
             }
+            
         }
 
         public List<Event> GetEventsByDate(DateTime date){
